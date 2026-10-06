@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1">
+
+  <title>Lab 1 — Marker AR</title>
+
+  <!-- Load A-Frame before AR.js. -->
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.7/aframe/build/aframe-ar.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+
+    #status {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      z-index: 10;
+      padding: 12px 16px;
+      color: white;
+      background: rgba(20, 30, 45, 0.85);
+      border-radius: 8px;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="status">
+    Allow camera access, then show the Hiro or Kanji marker.
+  </div>
+
+  <a-scene
+    embedded
+    vr-mode-ui="enabled: false"
+    renderer="alpha: true; antialias: true"
+    arjs="sourceType: webcam; debugUIEnabled: false">
+
+    <a-marker
+      id="exhibit-marker"
+      preset="hiro"
+      emitevents="true">
+
+      <!-- Group the background and text into one card. -->
+<a-entity
+  id="info-card"
+  position="0 0.03 0"
+  rotation="-90 0 0">
+
+  <!-- Card background -->
+  <a-plane
+    width="2.6"
+    height="1.6"
+    material="shader: flat; color: #16324F; side: double">
+  </a-plane>
+
+  <!-- Heading -->
+  <a-text
+    value="MUSEUM EXHIBIT"
+    position="-1.15 0.55 0.01"
+    width="2.3"
+    wrap-count="24"
+    color="#FFFFFF"
+    align="left"
+    anchor="left"
+    baseline="center">
+  </a-text>
+
+  <!-- Exhibit identifier -->
+  <a-text
+    value="Object 01: Ceramic vessel"
+    position="-1.15 0.20 0.01"
+    width="2.3"
+    wrap-count="32"
+    color="#7DE2D1"
+    align="left"
+    anchor="left"
+    baseline="center">
+  </a-text>
+
+  <!-- Description -->
+  <a-text
+    value="A handmade vessel used to store food.\nIts shape and decoration help us\nunderstand everyday life in the past."
+    position="-1.15 -0.25 0.01"
+    width="2.3"
+    wrap-count="38"
+    color="#FFFFFF"
+    align="left"
+    anchor="left"
+    baseline="center">
+  </a-text>
+
+</a-entity>
+
+    </a-marker>
+
+    <!-- The Kanji marker tracks independently from the Hiro marker. -->
+    <a-marker
+      id="sculpture-marker"
+      preset="kanji"
+      emitevents="true">
+
+      <!-- A simple animated sculpture, visually distinct from the info card. -->
+      <a-entity position="0 0.55 0">
+        <a-box
+          rotation="0 45 0"
+          scale="0.65 0.65 0.65"
+          material="color: #EF476F; metalness: 0.25; roughness: 0.35"
+          animation="property: rotation; to: 0 405 0; loop: true; dur: 5000; easing: linear">
+        </a-box>
+
+        <a-torus
+          rotation="90 0 0"
+          radius="0.7"
+          radius-tubular="0.05"
+          material="color: #FFD166; metalness: 0.4; roughness: 0.3"
+          animation="property: rotation; to: 90 360 0; loop: true; dur: 3500; easing: linear">
+        </a-torus>
+      </a-entity>
+
+    </a-marker>
+
+    <a-entity camera></a-entity>
+  </a-scene>
+
+  <script>
+  const exhibitMarker = document.querySelector("#exhibit-marker");
+  const sculptureMarker = document.querySelector("#sculpture-marker");
+  const status = document.querySelector("#status");
+  const visibleMarkers = new Set();
+
+  function updateStatus() {
+    if (visibleMarkers.size === 2) {
+      status.textContent = "Both markers detected - both objects are visible.";
+      status.style.background = "rgba(15, 100, 70, 0.9)";
+    } else if (visibleMarkers.has("Hiro")) {
+      status.textContent = "Hiro marker detected - information card visible.";
+      status.style.background = "rgba(15, 100, 70, 0.9)";
+    } else if (visibleMarkers.has("Kanji")) {
+      status.textContent = "Kanji marker detected - sculpture visible.";
+      status.style.background = "rgba(15, 100, 70, 0.9)";
+    } else {
+      status.textContent = "No marker detected - show the complete Hiro or Kanji marker.";
+      status.style.background = "rgba(140, 65, 20, 0.9)";
+    }
+  }
+
+  function trackMarker(marker, name) {
+    marker.addEventListener("markerFound", () => {
+      visibleMarkers.add(name);
+      updateStatus();
+    });
+
+    marker.addEventListener("markerLost", () => {
+      visibleMarkers.delete(name);
+      updateStatus();
+    });
+  }
+
+  trackMarker(exhibitMarker, "Hiro");
+  trackMarker(sculptureMarker, "Kanji");
+</script>
+</body>
+</html>
