@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lab 02 - 01-room</title>
+  <script src="https://aframe.io/releases/1.8.0/aframe.min.js"></script>
+  <script>
+    // Desktop navigation belongs to the rig. Disable it in immersive VR.
+    AFRAME.registerComponent('desktop-navigation', {
+      init: function () {
+        this.enter = () => this.el.setAttribute('wasd-controls', 'enabled', false);
+        this.exit = () => this.el.setAttribute('wasd-controls', 'enabled', true);
+        this.el.sceneEl.addEventListener('enter-vr', this.enter);
+        this.el.sceneEl.addEventListener('exit-vr', this.exit);
+      },
+      remove: function () {
+        this.el.sceneEl.removeEventListener('enter-vr', this.enter);
+        this.el.sceneEl.removeEventListener('exit-vr', this.exit);
+      }
+    });
+  </script>
+</head>
+<body>
+  <a-scene background="color: #DCE5EF" webxr="referenceSpaceType: local-floor">
+    <a-light type="ambient" intensity="0.65"></a-light>
+    <a-light type="directional" position="-3 5 2" intensity="0.8"></a-light>
+    <a-plane position="0 0 -2" rotation="-90 0 0" width="10" height="10" color="#8798A5"></a-plane>
+    <a-box position="0 1.75 -6" width="10" height="3.5" depth="0.15" color="#E9EDF1"></a-box>
+
+    <!-- A 1 m reference bar: its thin shape distinguishes it from the exhibits. -->
+    <a-box position="0 0.015 -1.2" width="1" height="0.03" depth="0.08" color="#172B42"></a-box>
+    <a-text value="1 metre reference" position="0 0.2 -1.2" align="center" width="1.5" color="#172B42"></a-text>
+
+    <a-text value="THE SHAPE GALLERY" position="0 3.35 -4.4" align="center" width="5" color="#172B42"></a-text>
+    <a-entity id="rig" position="0 0 0" wasd-controls="acceleration: 12" desktop-navigation>
+      <a-entity id="camera" camera look-controls position="0 1.6 0">
+
+      </a-entity>
+    </a-entity>
+  </a-scene>
+</body>
+</html>

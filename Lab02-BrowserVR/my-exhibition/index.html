@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lab 02 - 00-start</title>
+  <script src="https://aframe.io/releases/1.8.0/aframe.min.js"></script>
+  <script>
+    // Desktop navigation belongs to the rig. Disable it in immersive VR.
+    AFRAME.registerComponent('desktop-navigation', {
+      init: function () {
+        this.enter = () => this.el.setAttribute('wasd-controls', 'enabled', false);
+        this.exit = () => this.el.setAttribute('wasd-controls', 'enabled', true);
+        this.el.sceneEl.addEventListener('enter-vr', this.enter);
+        this.el.sceneEl.addEventListener('exit-vr', this.exit);
+      },
+      remove: function () {
+        this.el.sceneEl.removeEventListener('enter-vr', this.enter);
+        this.el.sceneEl.removeEventListener('exit-vr', this.exit);
+      }
+    });
+  </script>
+</head>
+<body>
+  <a-scene background="color: #DCE5EF" webxr="referenceSpaceType: local-floor">
+    <!-- Task 1: add the exhibition room here. -->
+    <a-entity id="rig" position="0 0 0" wasd-controls="acceleration: 12" desktop-navigation>
+      <a-entity id="camera" camera look-controls position="0 1.6 0">
+
+      </a-entity>
+    </a-entity>
+  </a-scene>
+</body>
+</html>

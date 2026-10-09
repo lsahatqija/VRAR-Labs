@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lab 02 - Starter</title>
+  <script src="https://aframe.io/releases/1.8.0/aframe.min.js"></script>
+  <script>
+    // Step 5: register your exhibit component here, before <a-scene> is parsed.
+
+    // Desktop navigation belongs to the rig. Disable it in immersive VR.
+    AFRAME.registerComponent('desktop-navigation', {
+      init: function () {
+        this.enter = () => this.el.setAttribute('wasd-controls', 'enabled', false);
+        this.exit = () => this.el.setAttribute('wasd-controls', 'enabled', true);
+        this.el.sceneEl.addEventListener('enter-vr', this.enter);
+        this.el.sceneEl.addEventListener('exit-vr', this.exit);
+      },
+      remove: function () {
+        this.el.sceneEl.removeEventListener('enter-vr', this.enter);
+        this.el.sceneEl.removeEventListener('exit-vr', this.exit);
+      }
+    });
+  </script>
+</head>
+<body>
+  <a-scene background="color: #DCE5EF" webxr="referenceSpaceType: local-floor">
+    <a-light type="ambient" intensity="0.65"></a-light>
+    <a-light type="directional" position="-3 5 2" intensity="0.8"></a-light>
+    <a-plane position="0 0 -2" rotation="-90 0 0" width="10" height="10" color="#8798A5"></a-plane>
+    <a-box position="0 1.75 -6" width="10" height="3.5" depth="0.15" color="#E9EDF1"></a-box>
+
+    <!-- A 1 m reference bar: its thin shape distinguishes it from the exhibits. -->
+    <a-box position="0 0.015 -1.2" width="1" height="0.03" depth="0.08" color="#172B42"></a-box>
+    <a-text value="1 metre reference" position="0 0.2 -1.2" align="center" width="1.5" color="#172B42"></a-text>
+
+    <a-text value="THE SHAPE GALLERY" position="0 3.35 -4.4" align="center" width="5" color="#172B42"></a-text>
+    <!-- World-space information stays in the exhibition, not attached to the head. -->
+    <a-plane position="0 2.55 -4.4" width="4.8" height="1.05" color="#172B42"></a-plane>
+    <a-text id="info-title" value="Aim at an exhibit for 1.2 seconds" position="0 2.87 -4.38" align="center" width="4.5"></a-text>
+    <a-text id="info-description" value="Select the cube, sphere, and cylinder to learn about their dimensions." position="0 2.55 -4.38" align="center" width="4.3" wrap-count="60"></a-text>
+    <a-text id="progress" value="Exhibits explored: 0/3" position="0 2.25 -4.38" align="center" width="3"></a-text>
+
+    <!-- Steps 3 and 4: add three exhibit groups, pedestals, shapes and labels here. -->
+
+    <a-entity id="rig" position="0 0 0" wasd-controls="acceleration: 12" desktop-navigation>
+      <a-entity id="camera" camera look-controls position="0 1.6 0">
+        <a-entity id="gaze" position="0 0 -1"
+          geometry="primitive: ring; radiusInner: 0.008; radiusOuter: 0.012"
+          material="shader: flat; color: #172B42"
+          cursor="rayOrigin: entity; fuse: true; fuseTimeout: 1200"
+          raycaster="objects: .clickable; far: 10">
+        </a-entity>
+      </a-entity>
+      <!-- Optional controller pointers; head-direction selection still works without them. -->
+      <a-entity laser-controls="hand: left; model: false" raycaster="objects: .clickable; far: 10"></a-entity>
+      <a-entity laser-controls="hand: right; model: false" raycaster="objects: .clickable; far: 10"></a-entity>
+    </a-entity>
+  </a-scene>
+</body>
+</html>

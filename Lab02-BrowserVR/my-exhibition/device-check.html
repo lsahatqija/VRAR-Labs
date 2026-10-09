@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>WebXR device check</title>
+<style>body{font:18px system-ui;max-width:700px;margin:2rem auto;padding:0 1rem;line-height:1.5}dd{overflow-wrap:anywhere;margin-bottom:1rem}button,a{font:inherit}</style></head>
+<body><h1>WebXR device check</h1><p>Open this page in the same browser that will run your exhibition.</p>
+<dl><dt>Origin</dt><dd id="origin"></dd><dt>Secure context</dt><dd id="secure"></dd><dt>WebXR API</dt><dd id="api"></dd><dt>Immersive VR support</dt><dd id="support">Checking...</dd></dl>
+<p>A secure context enables the API to be considered. Immersive VR also needs a compatible browser and device. A phone may display the scene while reporting no immersive VR support.</p>
+<p><a href="index.html">Open my exhibition</a></p><button onclick="location.reload()">Check again</button>
+<script>
+document.querySelector('#origin').textContent=location.origin;
+document.querySelector('#secure').textContent=String(window.isSecureContext);
+document.querySelector('#api').textContent=navigator.xr?'Available':'Unavailable';
+if(navigator.xr){navigator.xr.isSessionSupported('immersive-vr')
+  .then(ok=>document.querySelector('#support').textContent=ok?'Supported. Open the exhibition and select Enter VR.':'Not supported in this browser/device configuration.')
+  .catch(e=>document.querySelector('#support').textContent=e.name+': '+e.message);
+}else{document.querySelector('#support').textContent='Unavailable. Check HTTPS and browser support.';}
+</script></body></html>
