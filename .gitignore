@@ -1,0 +1,59 @@
+# Shared ignore rules for the VR/AR lab repository.
+# Lab 01 and Lab 02 are static HTML projects, while Lab 03 uses npm and Vite.
+
+# Node.js dependencies (may occur in nested student or instructor projects)
+node_modules/
+
+# Vite and other frontend build/cache output
+dist/
+.vite/
+.cache/
+coverage/
+.nyc_output/
+*.tsbuildinfo
+
+# Local environment files and secrets; commit documented examples instead
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.local
+
+# Local HTTPS development certificates
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+cert/
+certs/
+
+# Package-manager and development logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Browser and test-runner output
+playwright-report/
+test-results/
+
+# IDE-local settings
+.idea/
+.vscode/
+*.suo
+*.user
+*.userosscache
+
+# Operating-system metadata and temporary files
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+
+# Local agent/design inspection artifacts
+.taste-skill/

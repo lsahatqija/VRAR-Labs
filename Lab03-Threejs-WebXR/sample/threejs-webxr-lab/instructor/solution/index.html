@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Three.js and WebXR university lab starter" />
+    <title>Gallery Lab — Three.js + WebXR</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="back-link" href="../../" aria-label="Back to labs">←</a>
+        <div class="title-block">
+          <h1>Gallery Lab</h1>
+          <span id="status">Desktop preview ready</span>
+        </div>
+        <div class="topbar-actions">
+          <span class="lesson-progress">Lab 03 · 90 min</span>
+          <a class="readme-link" href="./README.md">Open guide</a>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <aside class="lab-panel" aria-label="Lab task overview">
+          <div class="panel-heading">
+            <h2>Build the XR interaction</h2>
+            <p>The gallery already works on desktop. Complete seven focused TODOs to take it into VR.</p>
+          </div>
+          <ol class="task-list">
+            <li><span>Scene graph</span><small>Place three exhibit groups</small></li>
+            <li><span>Render loop</span><small>Switch to the XR loop</small></li>
+            <li><span>WebXR</span><small>Enable VR and add its button</small></li>
+            <li><span>Controller</span><small>Add the primary input</small></li>
+            <li><span>Ray</span><small>Make aiming visible</small></li>
+            <li><span>Raycast</span><small>Find the nearest child mesh</small></li>
+            <li><span>Feedback</span><small>Update selection and label</small></li>
+          </ol>
+          <div class="panel-note">
+            <strong>Desktop controls</strong>
+            <p>Drag to orbit. Scroll to zoom. The mouse helper is optional and intentionally separate from controller input.</p>
+          </div>
+        </aside>
+
+        <section class="canvas-panel" aria-label="Interactive gallery preview">
+          <div id="scene-container"></div>
+          <div class="canvas-overlay" aria-hidden="true">
+            <span>Gallery / preview</span>
+            <span id="selection-readout">No exhibit selected</span>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
