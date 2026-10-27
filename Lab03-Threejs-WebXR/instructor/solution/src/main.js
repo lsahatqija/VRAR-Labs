@@ -37,9 +37,9 @@ gallery.add(infoPanel);
 
 const exhibits = createExhibits();
 const placements = [
-  { position: [-2.3, 1, -1.75], rotation: [0, 0.25, 0], scale: 0.82 },
-  { position: [0, 1, -1.75], rotation: [0, -0.18, 0], scale: 0.86 },
-  { position: [2.3, 1, -1.75], rotation: [0, 0.35, 0], scale: 1.02 },
+  { position: [-2.3, 1, -1.75], rotation: [0, 0.42, 0], scale: 0.78 },
+  { position: [0, 1, -1.75], rotation: [0, -0.3, 0], scale: 0.9 },
+  { position: [2.3, 1, -1.75], rotation: [0, 0.55, 0], scale: 1.08 },
 ];
 
 exhibits.forEach((exhibit, index) => {
@@ -51,7 +51,7 @@ exhibits.forEach((exhibit, index) => {
   gallery.add(exhibit);
 });
 
-const controller = renderer.xr.getController(0);
+let controller = renderer.xr.getController(0);
 scene.add(controller);
 
 const rayGeometry = new THREE.BufferGeometry().setFromPoints([
@@ -63,11 +63,11 @@ const rayLine = new THREE.Line(
   new THREE.LineBasicMaterial({ color: 0x78d8c7 }),
 );
 rayLine.name = 'controller-ray';
-rayLine.scale.z = 6;
+rayLine.scale.z = 10;
 controller.add(rayLine);
 
 const raycaster = new THREE.Raycaster();
-raycaster.far = 6;
+raycaster.far = 10;
 const rotationMatrix = new THREE.Matrix4();
 let selectedExhibit = null;
 
@@ -106,6 +106,36 @@ function onControllerSelect() {
 
 controller.addEventListener('select', onControllerSelect);
 
+const desktopControllerOrigin = new THREE.Vector3();
+const desktopAimPoint = new THREE.Vector3();
+const desktopAimDirection = new THREE.Vector3();
+const controllerForward = new THREE.Vector3(0, 0, -1);
+
+function syncDesktopController() {
+  if (renderer.xr.isPresenting) return;
+
+  camera.getWorldPosition(desktopControllerOrigin);
+  camera.getWorldDirection(desktopAimDirection);
+  desktopAimPoint.copy(desktopControllerOrigin).addScaledVector(desktopAimDirection, 10);
+
+  controller.position.copy(desktopControllerOrigin);
+  controller.quaternion.copy(camera.quaternion);
+  controller.translateX(0.32);
+  controller.translateY(-0.24);
+  controller.translateZ(-0.5);
+
+  desktopAimDirection.copy(desktopAimPoint).sub(controller.position).normalize();
+  controller.quaternion.setFromUnitVectors(controllerForward, desktopAimDirection);
+  controller.updateMatrix();
+  controller.visible = true;
+  container.classList.add('desktop-controller-ready');
+}
+
+window.addEventListener('keydown', (event) => {
+  if (event.code !== 'KeyE' || event.repeat || renderer.xr.isPresenting) return;
+  controller.dispatchEvent({ type: 'select' });
+});
+
 function resizeRenderer() {
   const { clientWidth, clientHeight } = container;
   if (renderer.xr.isPresenting) return;
@@ -118,6 +148,7 @@ function resizeRenderer() {
 function render() {
   resizeRenderer();
   controls.update();
+  syncDesktopController();
   renderer.render(scene, camera);
 }
 

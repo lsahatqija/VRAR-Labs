@@ -8,6 +8,10 @@
 - [ ] Orbit drag, wheel zoom, resize, lighting, and shadows behave normally.
 - [ ] The in-world information panel is legible and no console errors occur.
 - [ ] The reference solution shows the WebXR availability button/message.
+- [ ] A centre reticle, desktop controller ray, and keyboard hint are visible.
+- [ ] Orbiting keeps the simulated ray converging on the centre reticle.
+- [ ] Pressing `E` over each exhibit exercises the controller handler, recursive raycast, scale feedback, in-world panel, and HTML readout.
+- [ ] Pressing `E` over empty space leaves the current selection unchanged.
 
 ## Quest 2
 

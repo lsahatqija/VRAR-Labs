@@ -66,45 +66,64 @@ Work through the TODOs in `src/main.js` in order.
 
 ### TODO 1 — Arrange the exhibit groups
 
-Replace the starter loop with three explicit additions. Put each group above a pedestal and apply a small rotation or scale. Inspect `src/exhibits.js`: each exhibit is a `THREE.Group` containing several meshes.
+`createExhibits()` returns three `THREE.Group` objects. Each group contains the meshes that form one complete object, so transform the group rather than positioning its vessel parts, building parts, or sculpture parts separately.
 
-**Check:** the vessel, building, and sculpture sit separately on the three pedestals. Moving a group moves all of its child meshes.
+Replace the starter loop with a `placements` array that gives every exhibit a position, Y rotation, and uniform scale. In the loop, read the matching placement, apply it with `position.fromArray(...)`, `rotation.set(...)`, and `scale.setScalar(...)`, then add the group to `gallery`. Save the chosen scale as `exhibit.userData.restingScale`; TODO 7 will use it to undo selection feedback without destroying this layout.
+
+The pedestal centres are `[-2.3, 1, -1.75]`, `[0, 1, -1.75]`, and `[2.3, 1, -1.75]`. Choose noticeably different rotations and scales so the exercise has an obvious desktop result.
+
+**Desktop check:** the three objects remain centred on separate pedestals, but their orientation and size now visibly differ. Inspecting or moving a group affects all of its child meshes together.
 
 ### TODO 2 — Use the XR-compatible animation loop
 
-Replace the desktop `requestAnimationFrame` helper with the renderer API that schedules frames for both flat-screen and XR presentation.
+Delete `startDesktopLoop` and its call. Replace them with one call to `renderer.setAnimationLoop(render)`. A window-level `requestAnimationFrame` callback is appropriate for a normal monitor; during an immersive session the headset's `XRSession` must schedule frames. Three.js handles that switch through `setAnimationLoop`.
 
-**Check:** the desktop preview still animates and resizes. There must be only one active render loop.
+**Desktop check:** orbit damping and resizing still work exactly as before. This TODO is deliberately behavior-preserving on desktop; verify in the browser debugger that there is only one render path, not both loops running together.
 
 ### TODO 3 — Enable WebXR and add the entry button
 
-Import Three.js's `VRButton`, enable XR on the renderer, and append the button it creates. Use the pinned Three.js add-on import path already demonstrated by `OrbitControls`.
+Import `{ VRButton }` from `three/addons/webxr/VRButton.js`. Set `renderer.xr.enabled = true` when configuring the renderer, then append `VRButton.createButton(renderer)` to `document.body`. The helper checks WebXR support and owns the request/end-session UI.
 
-**Check:** an Enter VR button appears when the browser supports immersive VR; otherwise it displays a useful availability message. Desktop rendering must remain intact.
+**Desktop check:** a button or WebXR availability message appears at the bottom of the page. Desktop rendering must remain intact. A normal desktop browser may correctly report that VR is unsupported; the visible message still confirms that the helper was installed.
 
 ### TODO 4 — Add a controller
 
-Request controller index `0` from `renderer.xr`, add it to the scene, and register `onControllerSelect` for its `select` event.
+Assign `renderer.xr.getController(0)` to the supplied `controller` variable, add it to `scene`, and register `onControllerSelect` for its `select` event. This object represents the first input source's target-ray transform. It is not a controller model and contains no geometry by itself.
 
-**Check:** no console errors occur when entering VR and the handler runs when the primary trigger is pressed.
+The starter includes a desktop simulator. When no XR session is active, it gives this same controller object a camera-relative pose; pressing `E` dispatches the same `select` event that a headset trigger would dispatch. Do not replace this with a separate mouse-picking implementation.
+
+**Desktop check:** the centre reticle and “Press E” hint appear after the controller exists. Pressing `E` logs the starter handler message. **Headset check:** the same handler runs when the primary trigger is pressed.
 
 ### TODO 5 — Show a controller ray
 
-Create a line from the controller origin along its local negative Z axis. Make it long enough to reach the exhibits and add it as a child of the controller.
+Create a `THREE.BufferGeometry` from local points `(0, 0, 0)` and `(0, 0, -1)`. Combine it with a `THREE.LineBasicMaterial` in a `THREE.Line`, stretch the line to 10 metres with `scale.z`, and add it as a child of `controller`. Negative Z is the WebXR target-ray forward direction. Parenting is important: the line then inherits the controller's position and rotation automatically.
 
-**Check:** a visible ray follows the Quest controller as it moves.
+**Desktop check:** a mint ray appears from the simulated lower-right controller position and converges on the centre reticle while you orbit. **Headset check:** the same ray follows the Quest controller.
 
 ### TODO 6 — Raycast recursively
 
-In `onControllerSelect`, obtain the controller's world rotation and position, update `raycaster.ray`, then test `exhibits` recursively. Use the first intersection. Because the hit object is a child mesh, walk up its `.parent` chain until `userData.isExhibit` is true.
+In `onControllerSelect`, call `controller.updateWorldMatrix(true, false)`. Extract the rotation from `controller.matrixWorld`, obtain the world position for `raycaster.ray.origin`, and transform local forward `(0, 0, -1)` by that rotation to produce a normalized world-space direction.
 
-**Check:** pointing at the body, roof, door, knot, or base resolves to the correct whole exhibit. Empty space does nothing.
+Call `raycaster.intersectObjects(exhibits, true)`. The second argument must be `true` because the visible geometry belongs to child meshes, while `exhibits` contains their parent groups. Results are nearest-first, so use index `0`. Starting at that hit's `.object`, walk up `.parent` references until `userData.isExhibit` identifies the complete exhibit group. Select that group; return without changing anything when there is no hit.
+
+**Desktop check:** orbit until the reticle and ray cross an exhibit, then press `E`. The correct whole group reaches `selectExhibit`; aiming at empty space does nothing. This uses the same world-matrix and recursive-raycast code as XR.
 
 ### TODO 7 — Show one selection
 
-Restore the old selection to scale `1, 1, 1`, store the new group, enlarge it slightly, and update both the in-world panel and desktop readout using the group's `userData`.
+If the requested exhibit is already selected, return so repeated input cannot keep enlarging it. Restore the previous selection with its saved `userData.restingScale`, store the new group, and enlarge it to `restingScale * 1.12`. Update the in-world canvas panel with `infoPanel.userData.update(name, description)` and set `selectionReadout.textContent` to the same exhibit's name.
 
-**Check:** only the newest selection is enlarged; the previous exhibit returns to normal. Its title and description appear on the panel inside VR.
+**Desktop check:** pressing `E` visibly enlarges the aimed-at exhibit, changes the upper-right HTML readout, and redraws the in-world panel. Select a different object and confirm the first returns to its individual resting scale. **Headset check:** the same title, description, and scale feedback appear in VR.
+
+## Desktop controller simulation
+
+The simulator is intentionally small and remains outside the seven assessed TODOs. It only supplies a pose and keyboard event when `renderer.xr.isPresenting` is false. It calls `controller.updateMatrix()` explicitly because Three.js target-ray spaces have `matrixAutoUpdate` disabled—the active XR session normally writes that matrix. It does not implement a second selection algorithm:
+
+1. Drag to orbit until the centre reticle covers an exhibit.
+2. Confirm that the visible mint line points at the same place.
+3. Press `E` to dispatch the controller's `select` event.
+4. Use the console, scale change, readout, and in-world panel to verify TODOs 4–7 in stages.
+
+A desktop browser still cannot validate stereo presentation, headset tracking, input-profile mappings, comfort, or the Quest Browser's HTTPS/session behavior. Complete the physical-device checklist before treating the XR implementation as verified.
 
 ## A-Frame comparison
 
