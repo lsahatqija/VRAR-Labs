@@ -1,12 +1,11 @@
-import { CONFIG, LANDMARK } from "../config.js";
-import { landmarkToCanvas } from "../shared/coordinates.js";
+import { CONFIG } from "../config.js";
 import { cycleShapeColor, hitTestShape } from "../shared/shapes.js";
 
 let previousGesture = null;
 
 export function processGestureRecognizerResult(result, app) {
-  const hand = result.landmarks?.[0] ?? null;
-  if (!hand) {
+  const hasHand = Boolean(result.landmarks?.length);
+  if (!hasHand) {
     // TODO(student) 6: Clear previousGesture, highlightedId, selectedId and the status when tracking is lost.
     previousGesture = null;
     app.shapeState.highlightedId = null;
@@ -17,7 +16,7 @@ export function processGestureRecognizerResult(result, app) {
   app.setHandDetected(true);
 
   // TODO(student) 1: Safely read the first hand's top gesture category and score.
-  const topGesture = result.gestures?.[0]?.[0] ?? null;
+  const topGesture = null;
   const category = "—"; // Replace with topGesture.categoryName.
   const confidence = 0; // Replace with topGesture.score.
 
@@ -25,7 +24,7 @@ export function processGestureRecognizerResult(result, app) {
   app.setGesture(category, confidence);
 
   // TODO(student) 7: Reuse result.landmarks and map landmark 8 to the shared canvas.
-  const point = landmarkToCanvas(hand[LANDMARK.INDEX_TIP], app.canvas, CONFIG.mirrored);
+  const point = null;
 
   // TODO(student) 3: Ignore gestures below CONFIG.gestureConfidenceThreshold.
   const acceptedGesture = null;
@@ -43,5 +42,7 @@ export function processGestureRecognizerResult(result, app) {
 
   previousGesture = acceptedGesture;
   void topGesture;
-  return { ...point, active: Boolean(app.shapeState.highlightedId) };
+  void point;
+  // The untouched starter deliberately returns no canvas cursor or hand-driven motion.
+  return null;
 }

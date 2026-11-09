@@ -2,7 +2,7 @@
 
 Build two camera-based interactions in a local browser app. In Task 1 you turn hand landmarks into a pinch-and-drag control. In Task 2 you turn recognized gestures into actions on the same shapes.
 
-This folder is the student starter. It already includes the camera, both MediaPipe task pipelines, local models/WASM, landmark drawing, responsive UI, shared canvas, and safe placeholder behavior. You work only in the two files under `src/student/`.
+This folder is the student starter. It already includes the camera, both MediaPipe task pipelines, local models/WASM, responsive UI, shared canvas, and safe placeholder behavior. Landmark drawing and hand-driven canvas motion are intentionally left for you to implement. You work only in the two files under `src/student/`.
 
 ## Learning outcomes
 
@@ -84,7 +84,7 @@ The tasks answer different questions. Hand Landmarker gives hand geometry; your 
 
 ## Task 1 — Hand Landmarker
 
-Select **Task 1: Hand Landmarker**. The starter already displays the camera and hand skeleton. Open `src/student/task1-hand-landmarker.js` and complete the numbered `TODO(student)` comments:
+Select **Task 1: Hand Landmarker**. The starter displays the camera and reports whether a hand is detected, but it deliberately does not draw a skeleton or move a canvas cursor yet. Open `src/student/task1-hand-landmarker.js` and complete the numbered `TODO(student)` comments:
 
 1. Safely select one detected hand from `result.landmarks`.
 2. Read thumb tip landmark 4 and index fingertip landmark 8.
@@ -94,7 +94,7 @@ Select **Task 1: Hand Landmarker**. The starter already displays the camera and 
 6. On pinch start, use `hitTestShape` and select only an unlocked shape under the point.
 7. While the pinch continues, move the selected shape with `moveShape`.
 8. On release or tracking loss, clear the selection and state safely.
-9. Inspect `src/shared/overlay.js` and explain how its mirrored drawing stays aligned with the video.
+9. Call `app.drawOverlay(result.landmarks, "landmarker")` from `drawHandLandmarkerOverlay`. Inspect `src/shared/overlay.js` and explain how its mirrored drawing stays aligned with the video.
 
 Expected result: the skeleton remains aligned with your mirrored hand; the canvas cursor follows your index finger; pinching over a shape picks it up; holding the pinch moves it; opening the pinch releases it. Pinching empty space does not select anything.
 

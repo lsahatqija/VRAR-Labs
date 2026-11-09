@@ -5,7 +5,7 @@ import { resizeCanvasToDisplaySize, syncOverlayToVideo } from "./shared/coordina
 import { drawHandOverlay } from "./shared/overlay.js";
 import { createShapeState, drawShapes } from "./shared/shapes.js";
 import { getGestureRecognizer, getHandLandmarker } from "./shared/vision.js";
-import { processHandLandmarkerResult } from "./student/task1-hand-landmarker.js";
+import { drawHandLandmarkerOverlay, processHandLandmarkerResult } from "./student/task1-hand-landmarker.js";
 import { processGestureRecognizerResult } from "./student/task2-gesture-recognizer.js";
 
 document.querySelector("#app").innerHTML = `
@@ -94,6 +94,12 @@ const appApi = {
     elements.gestureStatus.textContent = category || "—";
     elements.confidenceStatus.textContent = category && category !== "—" ? `${Math.round(confidence * 100)}%` : "—";
   },
+  clearOverlay() {
+    overlayContext.clearRect(0, 0, elements.overlay.width, elements.overlay.height);
+  },
+  drawOverlay(landmarks, taskName) {
+    drawHandOverlay(overlayContext, landmarks, taskName, CONFIG.mirrored);
+  },
 };
 
 resizeCanvasToDisplaySize(elements.canvas);
@@ -107,12 +113,12 @@ async function renderFrame() {
     const timestamp = performance.now();
     if (activeTask === "landmarker") {
       const result = (await getHandLandmarker()).detectForVideo(elements.video, timestamp);
-      drawHandOverlay(overlayContext, result.landmarks, "landmarker", CONFIG.mirrored);
+      drawHandLandmarkerOverlay(result, appApi);
       cursor = processHandLandmarkerResult(result, appApi);
       appApi.setGesture("—", 0);
     } else {
       const result = (await getGestureRecognizer()).recognizeForVideo(elements.video, timestamp);
-      drawHandOverlay(overlayContext, result.landmarks, "gesture", CONFIG.mirrored);
+      appApi.clearOverlay();
       cursor = processGestureRecognizerResult(result, appApi);
     }
     drawShapes(shapeContext, shapeState, cursor);
