@@ -5,19 +5,14 @@ import { resizeCanvasToDisplaySize, syncOverlayToVideo } from "./shared/coordina
 import { drawHandOverlay } from "./shared/overlay.js";
 import { createShapeState, drawShapes } from "./shared/shapes.js";
 import { getGestureRecognizer, getHandLandmarker } from "./shared/vision.js";
-
-const solutionMode = new URLSearchParams(location.search).get("version") === "solution";
-const implementationRoot = solutionMode ? "solution" : "student";
-const [{ processHandLandmarkerResult }, { processGestureRecognizerResult }] = await Promise.all([
-  import(`./${implementationRoot}/task1-hand-landmarker.js`),
-  import(`./${implementationRoot}/task2-gesture-recognizer.js`),
-]);
+import { processHandLandmarkerResult } from "./student/task1-hand-landmarker.js";
+import { processGestureRecognizerResult } from "./student/task2-gesture-recognizer.js";
 
 document.querySelector("#app").innerHTML = `
   <header class="topbar">
     <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span>Handspace</span></div>
     <div class="lab-title"><strong>Lab 04</strong><span>MediaPipe hand interaction</span></div>
-    <span class="mode-label">${solutionMode ? "Instructor solution" : "Student starter"}</span>
+    <span class="mode-label">Student starter</span>
   </header>
   <main>
     <section class="control-row" aria-labelledby="workspace-title">
