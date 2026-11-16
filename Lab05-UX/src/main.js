@@ -19,7 +19,7 @@ const scene=new THREE.Scene(); scene.background=new THREE.Color(0x0e1615); scene
 const camera=new THREE.PerspectiveCamera(65,innerWidth/innerHeight,.05,100); camera.position.set(0,1.65,5.2);
 const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.xr.enabled=true;document.querySelector('#scene').append(renderer.domElement);document.body.append(VRButton.createButton(renderer));
 const exhibition=createExhibition(scene); const infoPanel=createInfoPanel();exhibition.gallery.add(infoPanel);
-const logger=createEventLog(condition); const router=createInputRouter(); const raycaster=new THREE.Raycaster();raycaster.far=20;
+const logger=createEventLog(condition); const router=createInputRouter(); const raycaster=new THREE.Raycaster();raycaster.far=20;const trialTarget=new URLSearchParams(location.search).get('target')||'Artifact vessel';
 let state='browsing',selected=null,hovered=null,destination=null,immersive=false,discontinuity=0;
 const marker=new THREE.Mesh(new THREE.RingGeometry(.18,.28,32),new THREE.MeshBasicMaterial({color:0x4fd4bc,side:THREE.DoubleSide}));marker.rotation.x=-Math.PI/2;marker.visible=false;scene.add(marker);
 
@@ -37,9 +37,9 @@ function currentTarget(){if(!router.input.tracking||!router.input.pointingPose)r
 function act(action){
   if(!router.input.tracking)return; const target=currentTarget();
   if(target?.userData.worldAction&&action==='primary'){target.userData.worldAction==='reset'?resetExperience():showInstructions(true);return;}
-  if(state==='browsing'&&action==='primary'&&target?.userData.isExhibit){selected=target;infoPanel.userData.show(target.userData);setState(transition(state,action,{exhibit:true}),{exhibit:target.userData.name});logger.log('panel-opened',{exhibit:target.userData.name});}
+  if(state==='browsing'&&action==='primary'&&target?.userData.isExhibit){selected=target;infoPanel.userData.show(target.userData);setState(transition(state,action,{exhibit:true}),{exhibit:target.userData.name});logger.log(target.userData.name===trialTarget?'correct-selection':'wrong-selection',{exhibit:target.userData.name,target:trialTarget});logger.log('panel-opened',{exhibit:target.userData.name});}
   else if(state==='browsing'&&action==='secondary'){setState(transition(state,action));logger.log('teleport-preview');}
-  else if(state==='information'&&action==='secondary'){infoPanel.userData.hide();setState(transition(state,action));logger.log('panel-closed');}
+  else if(state==='information'&&action==='secondary'){infoPanel.userData.hide();setState(transition(state,action));logger.log('panel-closed');if(selected?.userData.name===trialTarget)logger.log('task-completion',{task:'find-exhibit-fact'});}
   else if(state==='teleport'&&action==='secondary'){marker.visible=false;destination=null;setState(transition(state,action));logger.log('teleport-cancelled');}
   else if(state==='teleport'&&action==='primary'&&destination?.valid){camera.position.x=destination.point.x;camera.position.z=destination.point.z;marker.visible=false;setState(transition(state,action,{validDestination:true}));discontinuity++;logger.log('teleport-completed',{x:+destination.point.x.toFixed(2),z:+destination.point.z.toFixed(2)});}
   applyAppearance();
@@ -50,11 +50,12 @@ const xr=createXrControllers(renderer,scene,act,()=>{if(immersive){router.setImm
 renderer.xr.addEventListener('sessionstart',()=>{immersive=true;document.body.classList.add('immersive');desktop.setEnabled(false);cameraControls.cancel();router.setImmersive(xr);marker.visible=false;logger.log('input-mode-change',{mode:'immersive'});discontinuity++;});
 renderer.xr.addEventListener('sessionend',()=>{immersive=false;document.body.classList.remove('immersive');xr.clear();desktop.setEnabled(true);desktop.reset();router.setDesktop(desktop);logger.log('input-mode-change',{mode:'desktop'});discontinuity++;});
 document.querySelector('#reset').onclick=resetExperience;document.querySelector('#replay').onclick=()=>showInstructions(true);document.querySelector('#skip-onboarding').onclick=()=>showInstructions(false);document.querySelector('#export').onclick=logger.exportJson;
+document.addEventListener('visibilitychange',()=>{if(document.hidden)logger.log('trial-interrupted',{reason:'document-hidden'});});logger.log('input-mode-change',{mode:'desktop'});
 addEventListener('keydown',(event)=>{if(event.code==='Escape')resetExperience();});
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
 const clock=new THREE.Clock();setState('browsing');
 renderer.setAnimationLoop(()=>{
   const delta=Math.min(clock.getDelta(),.1);cameraControls.update(delta,!immersive);desktop.updateButtons();
-  if(router.input.tracking&&router.input.pointingPose){rayFromPose(router.input.pointingPose,raycaster);if(state==='browsing'){const next=resolveExhibit(raycaster,[exhibition.gallery]);hovered=next?.userData.isExhibit?next:null;applyAppearance();}if(state==='teleport'){destination=teleportHit(raycaster,exhibition.teleportSurfaces);marker.visible=!!destination;if(destination){marker.position.copy(destination.point);marker.position.y+=.02;marker.material.color.setHex(destination.valid?0x4fd4bc:0xe85d6a);document.querySelector('#hint').textContent=destination.valid?'Primary: confirm · Secondary: cancel':'Invalid destination · Secondary: cancel';}}}
+  if(router.input.tracking&&router.input.pointingPose){rayFromPose(router.input.pointingPose,raycaster);if(state==='browsing'){const next=resolveExhibit(raycaster,[exhibition.gallery]);const nextHover=next?.userData.isExhibit?next:null;if(nextHover!==hovered&&nextHover)logger.log('target-entry',{exhibit:nextHover.userData.name});hovered=nextHover;applyAppearance();}if(state==='teleport'){destination=teleportHit(raycaster,exhibition.teleportSurfaces);marker.visible=!!destination;if(destination){marker.position.copy(destination.point);marker.position.y+=.02;marker.material.color.setHex(destination.valid?0x4fd4bc:0xe85d6a);document.querySelector('#hint').textContent=destination.valid?'Primary: confirm · Secondary: cancel':'Invalid destination · Secondary: cancel';}}}
   renderer.render(scene,camera);
 });

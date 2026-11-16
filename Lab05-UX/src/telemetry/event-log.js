@@ -11,5 +11,6 @@ export function createEventLog(condition) {
     link.click(); URL.revokeObjectURL(link.href);
   }
   log('trial-start');
+  log('task-start', { task: 'find-exhibit-fact' });
   return { log, exportJson, events, trialId };
 }

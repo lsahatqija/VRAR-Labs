@@ -19,5 +19,6 @@ export function createExhibition(scene) {
   invalid.rotation.x=-Math.PI/2; invalid.position.set(3.9,.012,2.5); invalid.userData.teleportable=false; gallery.add(invalid);
   const reset = new THREE.Mesh(new THREE.BoxGeometry(.8,.28,.12),new THREE.MeshBasicMaterial({color:0x3d9b8d})); reset.position.set(-4.9,1.3,-4.43); reset.userData.worldAction='reset'; reset.userData.name='Reset'; gallery.add(reset); exhibits.push(reset);
   const replay = reset.clone(); replay.position.y=.9; replay.userData={worldAction:'replay',name:'Replay'}; gallery.add(replay); exhibits.push(replay);
+  const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=256;const ctx=canvas.getContext('2d');ctx.fillStyle='#17201f';ctx.fillRect(0,0,1024,256);ctx.fillStyle='#78d8c7';ctx.font='bold 42px system-ui';ctx.fillText('Primary: select / confirm',48,85);ctx.fillText('Secondary: teleport / close / cancel',48,145);ctx.fillStyle='white';ctx.font='28px system-ui';ctx.fillText('Left wall controls: reset and replay',48,205);const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;const sign=new THREE.Mesh(new THREE.PlaneGeometry(3.2,.8),new THREE.MeshBasicMaterial({map:texture}));sign.position.set(-3.7,2.7,-4.42);gallery.add(sign);
   return { gallery, exhibits, teleportSurfaces:[validFloor,invalid], obstruction };
 }
