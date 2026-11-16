@@ -1,0 +1,1 @@
+export function afterTransition(previous,next,{marker,panel,clearDestination,clearHover,clearSelection}){if(previous==='teleport'&&next!=='teleport'){marker.visible=false;clearDestination();}if(previous==='information'&&next!=='information'){panel.userData.hide();clearSelection();}if(next!=='browsing')clearHover();}

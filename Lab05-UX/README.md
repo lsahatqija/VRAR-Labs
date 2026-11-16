@@ -34,6 +34,8 @@ WebXR `select` maps to Primary and `squeeze` maps to Secondary. The right contro
 
 See [TASKS.md](TASKS.md), [TEST_WORKSHEET.md](TEST_WORKSHEET.md), and [NOTES.md](NOTES.md).
 
+The completed instructor reference is at `http://localhost:5173/solution/` while the parent dev server runs. It can also run independently with `cd solution`, `npm ci`, and `npm run dev`. Student packaging deliberately excludes this folder.
+
 ## Packaging and troubleshooting
 
 Run `npm run package:student`; the ZIP appears at `Lab05-UX-student.zip` and excludes dependencies, build output, and instructor notes. If WebXR is unavailable, confirm HTTPS, headset browser support, and certificate trust. Desktop mode remains fully usable.

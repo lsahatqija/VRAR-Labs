@@ -14,6 +14,8 @@
 
 The baseline intentionally uses subtle feedback, visible-mesh targets, a fixed panel, basic cancellation, a color-first teleport ring, and static onboarding. All are usable before modification. Stable input/XR infrastructure is shared; student changes enter only through `src/ux`. The three exhibit facts are explicit and locally generated.
 
+The solved reference lives in `solution/` and completes all six TODOs without changing student or baseline source. Its implementations remain in the matching `src/ux/` entry points for direct comparison.
+
 ## Verification record
 
 `npm test` covers translation bounds, shortest-quaternion 90° limit, one transition per action, obstruction order, pose round trips, time-based smoothing, and discontinuity reset. `npm run build` verifies imports and bundling. Browser verification and its date/results are appended here when performed.

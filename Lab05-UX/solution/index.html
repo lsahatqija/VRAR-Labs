@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+  <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lab 05 · VR Exhibition UX</title></head>
+  <body>
+    <main id="app">
+      <header><div><strong>Lab 05 · Completed UX Solution</strong><small>Instructor reference for the student tasks</small></div><nav><a href="../?condition=baseline">Baseline</a><a href="../?condition=student">Student</a></nav></header>
+      <section id="scene"></section>
+      <aside id="condition" aria-live="polite"></aside>
+      <section id="simulator" aria-label="Desktop controller simulator"><strong>Desktop simulator</strong><span>Drag gizmo · R rotate · T translate · right-drag look · WASD move</span><button id="translate">Translate (T)</button><button id="rotate">Rotate (R)</button><button id="reset-controller">Reset controller</button></section>
+      <div id="action-buttons"><button id="primary">Primary</button><button id="secondary">Secondary</button></div>
+      <section id="instructions"><strong>Try the exhibition</strong><span>Aim the controller ray. Primary selects. Secondary closes information or starts/cancels teleport.</span><button id="skip-onboarding">Skip</button></section>
+      <section id="hud"><span id="state"></span><span id="hint"></span><button id="reset">Reset experience</button><button id="replay">Replay instructions</button><button id="export">Export log</button></section>
+    </main><script type="module" src="./src/main.js"></script>
+  </body>
+</html>
