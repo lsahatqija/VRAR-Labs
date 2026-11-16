@@ -32,7 +32,7 @@ WebXR `select` maps to Primary and `squeeze` maps to Secondary. The right contro
 
 `main.js` composes the app. `scene/` builds the room. `input/` owns desktop/XR adapters. `interaction/` owns semantic state and ray rules. `ui/` owns the panel. `math/pose-helpers.js` supplies tested panel math. `ux/` contains six student entry points. `baseline/config.js` isolates comparison behavior. `telemetry/` stores and exports JSON.
 
-See [TASKS.md](TASKS.md), [TEST_WORKSHEET.md](TEST_WORKSHEET.md), and [INSTRUCTOR_NOTES.md](INSTRUCTOR_NOTES.md).
+See [TASKS.md](TASKS.md), [TEST_WORKSHEET.md](TEST_WORKSHEET.md), and [NOTES.md](NOTES.md).
 
 ## Packaging and troubleshooting
 
