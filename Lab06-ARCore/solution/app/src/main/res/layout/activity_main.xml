@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+  <android.opengl.GLSurfaceView
+      android:id="@+id/surfaceview"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent" />
+
+  <TextView
+      android:id="@+id/reticle"
+      android:layout_width="48dp"
+      android:layout_height="48dp"
+      android:layout_gravity="center"
+      android:background="@drawable/reticle"
+      android:contentDescription="@string/no_valid_hit"
+      android:importantForAccessibility="yes" />
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="top"
+      android:orientation="vertical"
+      android:padding="16dp">
+    <TextView
+        android:id="@+id/status_text"
+        style="@style/LabOverlayText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Initializing AR tracking…" />
+    <Button
+        android:id="@+id/pose_toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:text="Pose info" />
+    <TextView
+        android:id="@+id/pose_panel"
+        style="@style/LabOverlayText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Position: —&#10;Quaternion (x, y, z, w): —" />
+  </LinearLayout>
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom"
+      android:gravity="center_horizontal"
+      android:orientation="vertical"
+      android:padding="16dp">
+    <TextView
+        android:id="@+id/instruction_text"
+        style="@style/LabOverlayText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Aim at a surface and tap to select point 1" />
+    <TextView
+        android:id="@+id/measurement_text"
+        style="@style/LabMeasurementText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Distance: —" />
+    <Button
+        android:id="@+id/reset_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:text="Reset" />
+  </LinearLayout>
+</FrameLayout>

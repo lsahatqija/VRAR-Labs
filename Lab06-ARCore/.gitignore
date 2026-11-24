@@ -4,6 +4,9 @@
 
 # Gradle configuration.
 .gradle/
+.gradle-user/
+.android-user/
+.kotlin/
 build/
 
 # User configuration.
