@@ -5,6 +5,7 @@ export default defineConfig(({ mode }) => ({
   // The local certificate is deliberately enabled only for the lab HTTPS mode.
   plugins: mode === 'https' ? [basicSsl()] : [],
   server: {
+    allowedHosts: ['.trycloudflare.com'],
     host: true,
     port: 5173,
   },
